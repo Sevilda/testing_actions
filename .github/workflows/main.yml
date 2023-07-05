@@ -3,18 +3,16 @@ on:
     workflows: ["Build"]
     types: [completed]
 jobs:
-  aJob:    
-    name: A job
+  build:
+
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/github-script@v4
-      id: get-artifact-id
+
+    steps: 
+    - name: Download artifact
+      id: download-artifact
+      uses: dawidd6/action-download-artifact@v2
       with:
-        result-encoding: string
-        script: |
-          const octokit = new Octokit({ auth: 'YOUR-TOKEN'})
-          const result = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs', {
-            owner: '${{github.repository_owner}}',
-            repo: '${{github.event.repository.name}}',
-            run_id: ${{github.event.workflow_run.id}}
-          })
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        repo: ${{ github.repository }}
+        check_artifacts: false
+        search_artifacts: false
