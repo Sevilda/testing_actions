@@ -1,0 +1,29 @@
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types: [completed]
+jobs:
+  aJob:    
+    name: A job
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/github-script@v4
+      id: get-artifact-id
+      with:
+        result-encoding: string
+        script: |
+          const octokit = new Octokit({ auth: 'YOUR-TOKEN'})
+          const result = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs', {
+            owner: '${{github.repository_owner}}',
+            repo: '${{github.event.repository.name}}',
+            run_id: ${{github.event.workflow_run.id}}
+          })
+         # assumes the variables artifact is the only one in this workflow
+          return result.data
+    - name: Get result
+      run: |
+        echo "${{steps.get-artifact-id.outputs.result}}"
+        # curl -L -H "Authorization: token ${{github.token}}" \
+        #   -H "Accept: application/vnd.github.v3+json" \
+        #   -O logs.txt \
+        #   https://api.github.com/repos/Sevilda/testing_actions/actions/runs/5464633518/logs
