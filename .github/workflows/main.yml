@@ -18,12 +18,3 @@ jobs:
             repo: '${{github.event.repository.name}}',
             run_id: ${{github.event.workflow_run.id}}
           })
-         # assumes the variables artifact is the only one in this workflow
-          return result.data
-    - name: Get result
-      run: |
-        echo "${{steps.get-artifact-id.outputs.result}}"
-        # curl -L -H "Authorization: token ${{github.token}}" \
-        #   -H "Accept: application/vnd.github.v3+json" \
-        #   -O logs.txt \
-        #   https://api.github.com/repos/Sevilda/testing_actions/actions/runs/5464633518/logs
